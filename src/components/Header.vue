@@ -6,9 +6,11 @@
 </template>
 
 <script>
-export default {
+import Vue from "vue";
+
+export default Vue.extend({
 name: "Header"
-}
+})
 </script>
 
 <style scoped lang="scss">
