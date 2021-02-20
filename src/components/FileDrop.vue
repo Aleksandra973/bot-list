@@ -4,7 +4,7 @@
       color="grey lighten-4"
       width="100%"
       class="pa-2 uploading"
-      @drop.prevent="onFileDrop" @dragover.prevent
+      @drop.prevent="onFileDrop" @dragover.prevent = "dragover=true" @dragleave.prevent= "dragover=false" @dragenter.prevent= "dragover=true"
   >
     <input
         id="inputFile"
@@ -13,30 +13,68 @@
         accept=".jpg,.jpeg,.png"
         class="uploading__input"
     >
-    <p>Drop image here, or <label class="uploading__label" for="inputFile">click here </label>to select</p>
-    <img class="uploading__img" :src="image" />
-    <v-btn
-        color="red"
-        fab
-        x-small
-        dark
-        v-if="image"
-        @click="deleteImage"
-    >
-      <v-icon>mdi-close</v-icon>
-    </v-btn>
+    <v-row justify="center" class="my-2 mx-0">
+      <v-icon
+          v-if="!dragover"
+          color="primary"
+          size="45"
+      >mdi-cloud-upload-outline</v-icon>
+      <v-icon
+          v-if="dragover"
+          color="primary"
+          size="45"
+      >mdi-book-plus</v-icon>
+    </v-row>
+    <v-row justify="center" class="my-2 mx-0">
+      <p class="uploading__subtitle">Drop image here, or <label class="uploading__label" for="inputFile">click here </label>to select</p>
+    </v-row>
+    <v-row justify="center" class="my-2 mx-0">
+      <img class="uploading__img" :src="image" />
+      <v-btn
+          icon
+
+          v-if="image"
+          @click="deleteImage"
+      >
+        <v-icon color="red">mdi-close</v-icon>
+      </v-btn>
+    </v-row>
+
+
   </v-sheet>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import {PropType} from "vue";
+import Vue from 'vue';
 
 
 export default Vue.extend({
   name: "FileDrop",
-  data: ()=>({
-    image: ''
-  }),
+  props: {
+    value:  {
+      type: String as PropType<string>
+    },
+
+  },
+  data () {
+  return {
+    dragover: false
+  }},
+
+
+
+  computed: {
+    image: {
+      get () {
+        return this.value
+      },
+      set (value) {
+        this.$emit('input', value)
+      }
+    }
+  },
+
   methods: {
     uploadFile(event) {
       const {files} = event.target;
@@ -44,6 +82,7 @@ export default Vue.extend({
     },
     onFileDrop(event) {
       const droppedFile = event.dataTransfer.files;
+      this.dragover = false;
       this.submit(droppedFile);
     },
     submit(file) {
@@ -53,7 +92,7 @@ export default Vue.extend({
           this.image = e!.target!.result! as string;
       }
     },
-    deleteImage() {
+    deleteImage():void {
       this.image = ''
     }
   }
@@ -68,11 +107,14 @@ export default Vue.extend({
     };
     &__input {
       display: none;
-    }
+    };
+    &__subtitle{
+      text-align: center;
+    };
     &__label {
       cursor: pointer;
       text-decoration: underline;
-    }
+    };
     &__img{
       max-width: 100px;
       max-height: 100px;

@@ -1,6 +1,6 @@
 <template>
   <div class="bot-item mb-4 pa-2">
-    <span class="bot-item__title">New bot</span>
+    <span class="bot-item__title">{{bot.name}}</span>
     <v-btn
         color="red"
         fab
@@ -12,11 +12,18 @@
   </div>
 </template>
 
-<script>
-import Vue from "vue";
+<script lang="ts">
+import Vue, {PropType} from "vue";
+import {Bot} from "@/types/common";
 
 export default Vue.extend({
-name: "BotItem"
+  name: "BotItem",
+  props: {
+    bot: {
+      type: Object as PropType<Bot>,
+      /*required: true  */
+    }
+  }
 })
 </script>
 

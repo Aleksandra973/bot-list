@@ -5,6 +5,7 @@
           color="primary"
           x-large
           dark
+          @click="openModal"
       >
         <v-icon
             left
@@ -13,21 +14,44 @@
         </v-icon>Add new bot
       </v-btn>
     </div>
-  <BotList />
-    <ModalForm></ModalForm>
+    <div class="col-8">
+      <BotItem
+        v-for="bot in bots" :key="bot.id"
+        :bot="bot"
+
+      />
+    </div>
+
+    <ModalForm v-model="modalIsVisible" />
   </v-container>
 </template>
 
 <script lang="ts">
   import Vue from 'vue'
-  import BotList from "@/components/BotList.vue";
   import ModalForm from "@/components/ModalForm.vue";
+  import BotItem from "@/components/BotItem.vue";
+  import $store from "../store"
 
   export default Vue.extend({
     name: 'HelloWorld',
-    components: {ModalForm, BotList},
+    components: {ModalForm, BotItem},
     data: () => ({
-
+      modalIsVisible: false
     }),
+    methods: {
+      async openModal() {
+        this.modalIsVisible = true
+
+      }
+    },
+    computed:{
+      bots() {
+        return $store.getters['botsModule/bots']
+
+      }
+    },
+    async mounted() {
+     await $store.dispatch('botsModule/getBots');
+    }
   })
 </script>
