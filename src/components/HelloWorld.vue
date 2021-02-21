@@ -11,47 +11,45 @@
             left
         >
           mdi-plus
-        </v-icon>Add new bot
+        </v-icon>
+        Add new bot
       </v-btn>
     </div>
     <div class="col-8">
       <BotItem
-        v-for="bot in bots" :key="bot.id"
-        :bot="bot"
+          v-for="bot in bots" :key="bot.id"
+          :bot="bot"
 
       />
     </div>
 
-    <ModalForm v-model="modalIsVisible" />
+    <ModalForm v-model="modalIsVisible"/>
   </v-container>
 </template>
 
 <script lang="ts">
-  import Vue from 'vue'
-  import ModalForm from "@/components/ModalForm.vue";
-  import BotItem from "@/components/BotItem.vue";
-  import $store from "../store"
+import Vue from 'vue'
+import {Component} from 'vue-property-decorator'
+import ModalForm from "@/components/ModalForm.vue";
+import BotItem from "@/components/BotItem.vue";
+import $store from "../store"
 
-  export default Vue.extend({
-    name: 'HelloWorld',
-    components: {ModalForm, BotItem},
-    data: () => ({
-      modalIsVisible: false
-    }),
-    methods: {
-      async openModal() {
-        this.modalIsVisible = true
+@Component({
+  components: {ModalForm, BotItem}
+})
+export default class HelloWorld extends Vue {
+  modalIsVisible: boolean = false
 
-      }
-    },
-    computed:{
-      bots() {
-        return $store.getters['botsModule/bots']
+  async openModal() {
+    this.modalIsVisible = true
+  }
 
-      }
-    },
-    async mounted() {
-     await $store.dispatch('botsModule/getBots');
-    }
-  })
+  get bots() {
+    return $store.getters['botsModule/bots']
+  }
+
+  async mounted() {
+    await $store.dispatch('botsModule/getBots');
+  }
+}
 </script>

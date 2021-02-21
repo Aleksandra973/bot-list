@@ -7,10 +7,12 @@
 
 <script>
 import Vue from "vue";
+import { Component } from 'vue-property-decorator'
 
-export default Vue.extend({
-name: "Header"
-})
+@Component
+export default class Header  extends Vue{
+
+}
 </script>
 
 <style scoped lang="scss">

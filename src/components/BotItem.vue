@@ -13,18 +13,19 @@
 </template>
 
 <script lang="ts">
-import Vue, {PropType} from "vue";
+import 'reflect-metadata'
+import Vue from "vue";
 import {Bot} from "@/types/common";
+import { Component, Prop } from 'vue-property-decorator'
 
-export default Vue.extend({
-  name: "BotItem",
-  props: {
-    bot: {
-      type: Object as PropType<Bot>,
-      /*required: true  */
-    }
-  }
-})
+
+
+@Component
+export default class BotItem extends Vue{
+
+  @Prop() readonly bot!: Bot
+
+}
 </script>
 
 <style scoped lang="scss">

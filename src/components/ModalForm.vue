@@ -104,15 +104,35 @@
 </template>
 
 <script lang="ts">
-import { validationMixin } from 'vuelidate'
+import {Component, VModel} from 'vue-property-decorator'
+//import { validationMixin } from 'vuelidate'
 import { required, maxLength, minLength} from 'vuelidate/lib/validators'
 import FileDrop from "@/components/FileDrop.vue";
 import $store from "@/store";
 import Vue from "vue";
+import {Bot} from "@/types/common";
 
-export default Vue.extend ({
-  name: "ModalForm",
-  components: {FileDrop},
+@Component({
+  components: {FileDrop}
+})
+export default class ModalForm extends Vue{
+
+  bot: Bot = {
+    id: 0,
+    name: '',
+    description: '',
+    date: new Date(),
+    image: ''
+  }
+  date:any
+  menu: boolean = false
+
+  @VModel({type: Boolean}) show!: boolean
+
+  async saveBot() {
+    await $store.dispatch('botsModule/saveBot', this.bot)
+    this.show = false
+  }
   mixins: [validationMixin],
 
   validations: {
@@ -121,31 +141,11 @@ export default Vue.extend ({
     date: {required}
   },
 
-  data: ()=>({
-    bot: {
-      id: null,
-      name: '',
-      description: '',
-      date: '',
-      image: ''
-    },
-    date: '',
-    menu: false,
-  }),
 
-  props: {
-    value: Boolean
-  },
+
 
   computed: {
-    show: {
-      get () {
-        return this.value
-      },
-      set (value) {
-        this.$emit('input', value)
-      }
-    },
+
     nameErrors () {
       const errors = []
       if (!this.$v.name.$dirty) return errors
@@ -167,14 +167,11 @@ export default Vue.extend ({
         return errors
     }
   },
-  methods: {
-    async saveBot() {
-      await $store.dispatch('botsModule/saveBot', this.bot)
-      this.show = false
-    }
-  }
 
-})
+
+
+
+}
 </script>
 
 <style scoped lang="scss">

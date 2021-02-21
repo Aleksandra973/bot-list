@@ -4,7 +4,8 @@
       color="grey lighten-4"
       width="100%"
       class="pa-2 uploading"
-      @drop.prevent="onFileDrop" @dragover.prevent = "dragover=true" @dragleave.prevent= "dragover=false" @dragenter.prevent= "dragover=true"
+      @drop.prevent="onFileDrop" @dragover.prevent="dragover=true" @dragleave.prevent="dragover=false"
+      @dragenter.prevent="dragover=true"
   >
     <input
         id="inputFile"
@@ -18,18 +19,21 @@
           v-if="!dragover"
           color="primary"
           size="45"
-      >mdi-cloud-upload-outline</v-icon>
+      >mdi-cloud-upload-outline
+      </v-icon>
       <v-icon
           v-if="dragover"
           color="primary"
           size="45"
-      >mdi-book-plus</v-icon>
+      >mdi-book-plus
+      </v-icon>
     </v-row>
     <v-row justify="center" class="my-2 mx-0">
-      <p class="uploading__subtitle">Drop image here, or <label class="uploading__label" for="inputFile">click here </label>to select</p>
+      <p class="uploading__subtitle">Drop image here, or <label class="uploading__label" for="inputFile">click
+        here </label>to select</p>
     </v-row>
     <v-row justify="center" class="my-2 mx-0">
-      <img class="uploading__img" :src="image" />
+      <img class="uploading__img" :src="image"/>
       <v-btn
           icon
 
@@ -45,80 +49,70 @@
 </template>
 
 <script lang="ts">
-import {PropType} from "vue";
+
 import Vue from 'vue';
+import {Component, VModel} from 'vue-property-decorator'
+
+@Component
+export default class FileDrop extends Vue {
+
+  dragover:boolean = false
+  @VModel({type: String}) image!: string
 
 
-export default Vue.extend({
-  name: "FileDrop",
-  props: {
-    value:  {
-      type: String as PropType<string>
-    },
+  uploadFile(event: any): void {
+    this.submit(event.target as Blob[]);
+  }
 
-  },
-  data () {
-  return {
-    dragover: false
-  }},
+  onFileDrop(event: any): void {
+    const droppedFile = event.dataTransfer.files;
+    this.dragover = false;
+    this.submit(droppedFile);
+  }
 
-
-
-  computed: {
-    image: {
-      get () {
-        return this.value
-      },
-      set (value) {
-        this.$emit('input', value)
-      }
-    }
-  },
-
-  methods: {
-    uploadFile(event) {
-      const {files} = event.target;
-      this.submit(files);
-    },
-    onFileDrop(event) {
-      const droppedFile = event.dataTransfer.files;
-      this.dragover = false;
-      this.submit(droppedFile);
-    },
-    submit(file) {
-        const reader = new FileReader();
-        reader.readAsDataURL(file[0]);
-        reader.onload = e => {
-          this.image = e!.target!.result! as string;
-      }
-    },
-    deleteImage():void {
-      this.image = ''
+  submit(file: Blob[]): void {
+    const reader = new FileReader();
+    reader.readAsDataURL(file[0]);
+    reader.onload = e => {
+      this.image = e!.target!.result! as string;
     }
   }
 
-})
+  deleteImage(): void {
+    this.image = ''
+  }
+
+
+}
 </script>
 
 <style scoped lang="scss">
-  .uploading {
-    &:focus {
-      outline-color: #3176d2;
-    };
-    &__input {
-      display: none;
-    };
-    &__subtitle{
-      text-align: center;
-    };
-    &__label {
-      cursor: pointer;
-      text-decoration: underline;
-    };
-    &__img{
-      max-width: 100px;
-      max-height: 100px;
-    }
-
+.uploading {
+  &:focus {
+    outline-color: #3176d2;
   }
+;
+
+  &__input {
+    display: none;
+  }
+;
+
+  &__subtitle {
+    text-align: center;
+  }
+;
+
+  &__label {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+;
+
+  &__img {
+    max-width: 100px;
+    max-height: 100px;
+  }
+
+}
 </style>
