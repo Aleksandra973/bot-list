@@ -40,7 +40,7 @@ import $store from "../store"
 export default class HelloWorld extends Vue {
   modalIsVisible: boolean = false
 
-  async openModal() {
+  openModal(): void {
     this.modalIsVisible = true
   }
 

@@ -17,21 +17,21 @@
                 :error-messages="nameErrors"
                 label="Name"
                 required
-                @input="$v.name.$touch()"
-                @blur="$v.name.$touch()"
+                @input="$v.bot.name.$touch()"
+                @blur="$v.bot.name.$touch()"
             />
             <v-textarea
                 v-model="bot.description"
                 label="Description"
                 :counter="100"
                 :error-messages="descriptionErrors"
-                @input="$v.description.$touch()"
-                @blur="$v.description.$touch()"
+                @input="$v.bot.description.$touch()"
+                @blur="$v.bot.description.$touch()"
                 auto-grow
                 rows="2"
                 row-height="15"
             ></v-textarea>
-            <FileDrop v-model="bot.image" />
+            <FileDrop v-model="bot.image"/>
             <v-menu
                 ref="menu"
                 v-model="menu"
@@ -43,11 +43,11 @@
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-text-field
-                    v-model="date"
+                    v-model="bot.date"
                     :error-messages="dateErrors"
                     required
-                    @input="$v.date.$touch()"
-                    @blur="$v.date.$touch()"
+                    @input="$v.bot.date.$touch()"
+                    @blur="$v.bot.date.$touch()"
                     label="Date"
                     append-icon="mdi-calendar"
                     readonly
@@ -56,7 +56,7 @@
                 ></v-text-field>
               </template>
               <v-date-picker
-                  v-model="date"
+                  v-model="bot.date"
                   no-title
                   scrollable
                   color="primary"
@@ -105,26 +105,40 @@
 
 <script lang="ts">
 import {Component, VModel} from 'vue-property-decorator'
-//import { validationMixin } from 'vuelidate'
-import { required, maxLength, minLength} from 'vuelidate/lib/validators'
+import {validationMixin} from 'vuelidate'
+import {required, maxLength, minLength} from 'vuelidate/lib/validators'
 import FileDrop from "@/components/FileDrop.vue";
 import $store from "@/store";
 import Vue from "vue";
 import {Bot} from "@/types/common";
+import {PropType} from "vue/types/options";
+
+interface ModelBot extends Omit<Bot, 'date'> {
+  date: any
+}
 
 @Component({
-  components: {FileDrop}
-})
-export default class ModalForm extends Vue{
+  components: {FileDrop},
+  mixins: [validationMixin],
+  validations: {
+    bot: {
+      name: {required, minLength: minLength(3)},
+      description: {required, maxLength: maxLength(100)},
+      date: {required}
+    }
 
-  bot: Bot = {
+  },
+})
+export default class ModalForm extends Vue {
+
+  bot: ModelBot = {
     id: 0,
     name: '',
     description: '',
-    date: new Date(),
+    date: '',
     image: ''
   }
-  date:any
+  date: [Array, String]  = ''
   menu: boolean = false
 
   @VModel({type: Boolean}) show!: boolean
@@ -133,49 +147,36 @@ export default class ModalForm extends Vue{
     await $store.dispatch('botsModule/saveBot', this.bot)
     this.show = false
   }
-  mixins: [validationMixin],
 
-  validations: {
-    name: {required, minLength: minLength(3)},
-    description: {required, maxLength: maxLength(100)},
-    date: {required}
-  },
+  get nameErrors(): string[] {
+    const errors: string[] = []
+    if (!this.$v.bot.name.$dirty) return errors
+    !this.$v.bot.name.minLength && errors.push('The name must be at least 3 characters long.')
+    !this.$v.bot.name.required && errors.push('Name is required.')
+    return errors
+  }
 
+  get descriptionErrors(): string[] {
+    const errors: string[] = []
+    if (!this.$v.bot.description.$dirty) return errors
+    !this.$v.bot.description.maxLength && errors.push('The description must be at most 100 characters long.')
+    !this.$v.bot.description.required && errors.push('Description is required.')
+    return errors
+  }
 
-
-
-  computed: {
-
-    nameErrors () {
-      const errors = []
-      if (!this.$v.name.$dirty) return errors
-      !this.$v.name.minLength && errors.push('The name must be at least 3 characters long.')
-      !this.$v.name.required && errors.push('Name is required.')
-      return errors
-    },
-    descriptionErrors() {
-      const errors = []
-      if (!this.$v.description.$dirty) return errors
-      !this.$v.description.maxLength && errors.push('The description must be at most 100 characters long.')
-      !this.$v.description.required && errors.push('Description is required.')
-      return errors
-    },
-    dateErrors() {
-        const errors = []
-        if (!this.$v.date.$dirty) return errors
-        !this.$v.date.required && errors.push('Date is required')
-        return errors
-    }
-  },
-
-
+  get dateErrors(): string[] {
+    const errors: string[] = []
+   if (!this.$v.bot.date.$dirty) return errors
+   !this.$v.bot.date.required && errors.push('Date is required')
+ return errors
+}
 
 
 }
 </script>
 
 <style scoped lang="scss">
-  .cancel-button{
-    color: #272727 !important;
-  }
+.cancel-button {
+  color: #272727 !important;
+}
 </style>
