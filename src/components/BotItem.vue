@@ -1,11 +1,12 @@
 <template>
   <div class="bot-item mb-4 pa-2">
-    <span class="bot-item__title">{{bot.name}}</span>
+    <span class="bot-item__title" @click="openEditModal">{{bot.name}}</span>
     <v-btn
         color="red"
         fab
         x-small
         dark
+        @click="deleteBot"
     >
       <v-icon>mdi-trash-can-outline</v-icon>
     </v-btn>
@@ -16,7 +17,8 @@
 import 'reflect-metadata'
 import Vue from "vue";
 import {Bot} from "@/types/common";
-import { Component, Prop } from 'vue-property-decorator'
+import {Component, Emit, Prop} from 'vue-property-decorator'
+import $store from "@/store";
 
 
 
@@ -24,6 +26,16 @@ import { Component, Prop } from 'vue-property-decorator'
 export default class BotItem extends Vue{
 
   @Prop() readonly bot!: Bot
+
+  @Emit()
+  openEditModal() {
+    return this.bot.id
+  }
+
+  async deleteBot() {
+    await $store.dispatch('botsModule/deleteBot', this.bot.id);
+    await $store.dispatch('botsModule/getBots');
+  }
 
 }
 </script>
@@ -38,6 +50,10 @@ export default class BotItem extends Vue{
     &__title{
       position: relative;
       margin: 0 auto;
+      cursor: pointer;
+      &:hover{
+        text-decoration: underline;
+      }
     }
   }
 </style>

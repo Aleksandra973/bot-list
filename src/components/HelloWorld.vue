@@ -19,11 +19,14 @@
       <BotItem
           v-for="bot in bots" :key="bot.id"
           :bot="bot"
-
+          @open-edit-modal="openEditModal"
       />
     </div>
 
-    <ModalForm v-model="modalIsVisible"/>
+    <ModalForm
+        v-model="modalIsVisible"
+        :botId = "botId"
+    />
   </v-container>
 </template>
 
@@ -39,9 +42,16 @@ import $store from "../store"
 })
 export default class HelloWorld extends Vue {
   modalIsVisible: boolean = false
+  botId: number = 0
 
   openModal(): void {
     this.modalIsVisible = true
+    this.botId = 0
+  }
+
+  openEditModal(e: number): void {
+    this.modalIsVisible = true
+    this.botId = e
   }
 
   get bots() {

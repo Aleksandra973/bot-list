@@ -61,7 +61,7 @@ export default class FileDrop extends Vue {
 
 
   uploadFile(event: any): void {
-    this.submit(event.target as Blob[]);
+    this.submit(event.target.files);
   }
 
   onFileDrop(event: any): void {
@@ -70,7 +70,7 @@ export default class FileDrop extends Vue {
     this.submit(droppedFile);
   }
 
-  submit(file: Blob[]): void {
+  submit(file:any): void {
     const reader = new FileReader();
     reader.readAsDataURL(file[0]);
     reader.onload = e => {

@@ -40,7 +40,7 @@ export class BotService {
        }
     };
 
-    static async saveBot(bot: Bot) {
+    static async saveBot(bot: Bot): Promise<number> {
         await BotService.init();
         const tx = BotService.db.transaction('bots', 'readwrite');
         const store = tx.objectStore('bots');
@@ -48,20 +48,18 @@ export class BotService {
         return result;
     };
 
-    static async deleteBot(bot: Bot) {
+    static async deleteBot(botId: number): Promise<void> {
         await BotService.init();
         const tx = BotService.db.transaction('bots', 'readwrite');
         const store = tx.objectStore('bots');
-        await store.delete(bot.id);
-        return bot.id;
+        await store.delete(botId);
     };
 
-    static async getBots() {
+    static async getBots(): Promise<Bot[]> {
         await BotService.init();
         const tx = BotService.db.transaction('bots', 'readonly');
         const store = tx.objectStore('bots');
         const result = await store.getAll();
-        console.log('Get All Data', JSON.stringify(result));
         return result;
     }
 
