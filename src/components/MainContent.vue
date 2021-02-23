@@ -40,7 +40,7 @@ import $store from "../store"
 @Component({
   components: {ModalForm, BotItem}
 })
-export default class HelloWorld extends Vue {
+export default class MainContent extends Vue {
   modalIsVisible: boolean = false
   botId: number = 0
 

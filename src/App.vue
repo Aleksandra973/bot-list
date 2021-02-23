@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
+import MainContent from './components/MainContent.vue';
 import Header from "@/components/Header.vue";
 import {BotService} from "./services/idb"
 
@@ -18,7 +18,7 @@ export default Vue.extend({
 
   components: {
     Header,
-    HelloWorld,
+    HelloWorld: MainContent,
   },
 
   data: () => ({
