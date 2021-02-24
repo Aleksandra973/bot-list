@@ -55,11 +55,11 @@ export default class MainContent extends Vue {
   }
 
   get bots() {
-    return $store.getters['botsModule/bots']
+    return this.$store.getters['botsModule/bots']
   }
 
   async mounted() {
-    await $store.dispatch('botsModule/getBots');
+    await this.$store.dispatch('botsModule/getBots');
   }
 }
 </script>
